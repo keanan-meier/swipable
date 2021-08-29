@@ -154,7 +154,9 @@ class SwipableState extends State<Swipable> {
       _positionY += details.delta.dy;
     });
 
-    widget.onPositionChanged!(details);
+    if(widget.onPositionChanged != null){
+      widget.onPositionChanged!(details);
+    }
   }
 
   void _onPanStart(DragStartDetails details) {
@@ -162,7 +164,9 @@ class SwipableState extends State<Swipable> {
       _duration = 0;
     });
 
-    widget.onSwipeStart!(details);
+    if(widget.onSwipeStart != null){
+      widget.onSwipeStart!(details);
+    }
   }
 
   void _onPanEnd(DragEndDetails details) {
@@ -210,12 +214,16 @@ class SwipableState extends State<Swipable> {
       newX = potentialX;
       newY = potentialY;
 
-      widget.onSwipeEnd!(currentPosition, details);
+      if(widget.onSwipeEnd != null){
+        widget.onSwipeEnd!(currentPosition, details);
+      }
     } else {
       newX = 0;
       newY = 0;
 
-      widget.onSwipeCancel!(currentPosition, details);
+      if(widget.onSwipeCancel != null){
+        widget.onSwipeCancel!(currentPosition, details);
+      }
     }
 
     setState(() {
