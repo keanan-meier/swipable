@@ -1,6 +1,7 @@
 library swipe_card;
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -121,7 +122,9 @@ class SwipableState extends State<Swipable> {
     super.initState();
 
     _swipeSub = widget.swipe?.listen((angle) {
+      log("LISTENER TRIGGER VALUE SHOULD LISTEN=>" + widget.shouldListen.toString());
       if(widget.shouldListen){
+        log("LISTENED here we goooo");
         _swipeSub?.cancel();
         _animate(angle);
       }
