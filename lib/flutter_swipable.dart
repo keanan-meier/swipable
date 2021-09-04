@@ -7,6 +7,16 @@ import 'package:flutter/material.dart';
 
 import 'dart:math' as math;
 
+class SwipableStream {
+  double? angle;
+  int? index;
+
+  SwipableStream({
+    this.angle,
+    this.index
+  });
+}
+
 class Swipable extends StatefulWidget {
   /// @param child [Widget]
   /// @required
@@ -57,11 +67,11 @@ class Swipable extends StatefulWidget {
   /// Triggers an automatic swipe.
   /// Cancels automatically after first emission.R
   /// The double value sent corresponds to the direction the card should follow (clockwise radian angle).
-  final Stream<double>? swipe;
+  final Stream<SwipableStream>? swipe;
 
   /// @param swipe [Stream<double>]
   /// Determines if widget will listen to the controller event passed
-  final bool shouldListen;
+  final int? index;
 
   /// @param animationDuration [int]
   /// Animation duration (in milliseconds) for the card to swipe atuomatically or get back to its original position on swipe cancel.
@@ -86,6 +96,8 @@ class Swipable extends StatefulWidget {
   /// defaults to true.
   final bool verticalSwipe;
 
+  final bool isTop;
+
   Swipable({
     @required this.child,
     this.onSwipeRight,
@@ -97,12 +109,13 @@ class Swipable extends StatefulWidget {
     this.onSwipeCancel,
     this.onSwipeEnd,
     this.swipe,
-    this.shouldListen = true,
+    this.index,
     this.animationDuration = 300,
     this.animationCurve = Curves.easeInOut,
     this.horizontalSwipe = true,
     this.verticalSwipe = true,
     this.threshold = 0.3,
+    this.isTop = false
   });
 
   @override
@@ -121,12 +134,15 @@ class SwipableState extends State<Swipable> {
   void initState() {
     super.initState();
 
-    _swipeSub = widget.swipe?.listen((angle) {
-      log("LISTENER TRIGGER VALUE SHOULD LISTEN=>" + widget.shouldListen.toString());
-      if(widget.shouldListen){
-        log("LISTENED here we goooo");
+    _swipeSub = widget.swipe?.listen((data) {
+      //handle index 
+      if(data.index != null){
+        widget.isTop = data.index == widget.index;
+      }
+
+      if(data.angle != null){
         _swipeSub?.cancel();
-        _animate(angle);
+        _animate(data.angle);
       }
     });
   }
@@ -219,7 +235,7 @@ class SwipableState extends State<Swipable> {
     //either it will be moving vertically or horizontally but not both
     if (movingVertically && !widget.verticalSwipe) shouldSwipe = false;
     if (movingHorizontally && !widget.horizontalSwipe) shouldSwipe = false;
-    if (shouldSwipe) {
+    if (shouldSwipe && widget.isTop) {
       // horizontal speed or vertical speed is enough to make the card disappear in _duration ms.
       newX = potentialX;
       newY = potentialY;
