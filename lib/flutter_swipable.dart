@@ -58,6 +58,10 @@ class Swipable extends StatefulWidget {
   /// The double value sent corresponds to the direction the card should follow (clockwise radian angle).
   final Stream<double>? swipe;
 
+  /// @param swipe [Stream<double>]
+  /// Determines if widget will listen to the controller event passed
+  final bool shouldListen;
+
   /// @param animationDuration [int]
   /// Animation duration (in milliseconds) for the card to swipe atuomatically or get back to its original position on swipe cancel.
   final int? animationDuration;
@@ -92,6 +96,7 @@ class Swipable extends StatefulWidget {
     this.onSwipeCancel,
     this.onSwipeEnd,
     this.swipe,
+    this.shouldListen = true,
     this.animationDuration = 300,
     this.animationCurve = Curves.easeInOut,
     this.horizontalSwipe = true,
@@ -116,8 +121,10 @@ class SwipableState extends State<Swipable> {
     super.initState();
 
     _swipeSub = widget.swipe?.listen((angle) {
-      _swipeSub?.cancel();
-      _animate(angle);
+      if(widget.shouldListen){
+        _swipeSub?.cancel();
+        _animate(angle);
+      }
     });
   }
 
